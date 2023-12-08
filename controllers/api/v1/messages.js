@@ -2,24 +2,32 @@
 const Message = require("../../../models/Message");
 
 const index = async (req, res) => {
+    const { user } = req.query;
+
     try {
-        // Probeer berichten op te halen uit MongoDB
-        let messages = await Message.find({});
-        res.json({
-            status: "success",
-            message: "GET all messages",
-            data: [
-                {
+        // Controleer of er een gebruikersnaam is opgegeven
+        if (user) {
+            // Probeer berichten op te halen uit MongoDB voor de opgegeven gebruikersnaam
+            let messages = await Message.find({ user });
+            res.json({
+                status: "success",
+                message: `GET messages for username ${user}`,
+                data: {
                     messages: messages,
                 },
-            ],
-        });
+            });
+        } else {
+            res.status(400).json({
+                status: "fail",
+                message: "Gebruikersnaam is vereist voor deze query",
+            });
+        }
     } catch (error) {
         // Als er een fout optreedt bij het ophalen van berichten uit MongoDB
         console.error("Fout bij het ophalen van berichten:", error);
         // Stuur een aangepaste response zonder MongoDB
         res.json({
-            message: "GETTING messages",
+            message: `GETTING messages for username ${user}`,
         });
     }
 };
