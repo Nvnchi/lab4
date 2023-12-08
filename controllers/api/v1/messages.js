@@ -2,16 +2,26 @@
 const Message = require("../../../models/Message");
 
 const index = async (req, res) => {
-    let messages = await Message.find({});
-    res.json({
-        status: "success",
-        message: "GET all messages",
-        data: [
-            {
-                messages: messages,
-            },
-        ],
-    });
+    try {
+        // Probeer berichten op te halen uit MongoDB
+        let messages = await Message.find({});
+        res.json({
+            status: "success",
+            message: "GET all messages",
+            data: [
+                {
+                    messages: messages,
+                },
+            ],
+        });
+    } catch (error) {
+        // Als er een fout optreedt bij het ophalen van berichten uit MongoDB
+        console.error("Fout bij het ophalen van berichten:", error);
+        // Stuur een aangepaste response zonder MongoDB
+        res.json({
+            message: "GETTING messages",
+        });
+    }
 };
 
 const create = async (req, res) => {
